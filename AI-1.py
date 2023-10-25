@@ -1,35 +1,22 @@
 from collections import deque
 
-def add_edge(graph, u, v):
-    if u in graph:
-        graph[u].append(v)
-    else:
-        graph[u] = [v]
+def dfs(graph, vertex, visited):
+    if vertex not in visited:
+        print(vertex, end=' ')
+        visited.add(vertex)
 
-    if v in graph:
-        graph[v].append(u)
-    else:
-        graph[v] = [u]
-
-def recursive_dfs(graph, start, visited=None):
-    if visited is None:
-        visited = set()
-
-    if start not in visited:
-        print(start, end=' ')
-        visited.add(start)
-
-        for neighbor in graph[start]:
-            recursive_dfs(graph, neighbor, visited)
+        for neighbor in graph[vertex]:
+            if neighbor not in visited:
+                dfs(graph, neighbor, visited)
 
 def recursive_bfs(graph, start, queue, visited):
     if not queue:
         return
 
-    current = queue.popleft()
-    print(current, end=' ')
+    vertex = queue.popleft()
+    print(vertex, end=' ')
 
-    for neighbor in graph[current]:
+    for neighbor in graph[vertex]:
         if neighbor not in visited:
             queue.append(neighbor)
             visited.add(neighbor)
@@ -41,21 +28,32 @@ def bfs(graph, start):
     queue = deque([start])
     visited.add(start)
 
-    print("\nBFS:")
+    print("\nBFS Traversal:")
     recursive_bfs(graph, start, queue, visited)
 
-# Take user input to construct the graph
-graph = {}
-num_edges = int(input("Enter the number of edges: "))
+def main():
+    graph = {}
+    
+    num_edges = int(input("Enter the number of edges: "))
+    for _ in range(num_edges):
+        src, dest = input("Enter edge (source destination): ").split()
+        if src not in graph:
+            graph[src] = []
+        if dest not in graph:
+            graph[dest] = []
+        graph[src].append(dest)
+        graph[dest].append(src)
 
-for _ in range(num_edges):
-    u, v = map(int, input("Enter edge (u v): ").split())
-    add_edge(graph, u, v)
+    start_vertex = input("Enter the starting vertex: ")
 
-# Take user input for the starting vertex
-start_vertex = int(input("Enter the starting vertex: "))
+    visited = set()
 
-# Perform DFS and BFS
-print("\nDFS:")
-recursive_dfs(graph, start_vertex)
-bfs(graph, start_vertex)
+    print("\nDFS Traversal:")
+    dfs(graph, start_vertex, visited)
+
+    visited = set()
+
+    bfs(graph, start_vertex)
+
+if __name__ == "__main__":
+    main()
